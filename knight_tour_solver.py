@@ -1,4 +1,5 @@
 # knight_tour_solver.py
+import time 
 import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedStyle
@@ -26,7 +27,7 @@ class KnightTourSolver:
         self.input_frame = tk.Frame(self.master, bg="#D3D3D3")
         self.input_frame.pack(pady=20)
 
-        tk.Label(self.input_frame, text="Enter Board Size (N x N):", bg="#D3D3D3").grid(row=0, column=0, padx=10, pady=10)
+        tk.Label(self.input_frame, text="Enter Board Size (N x N):\n\n N must be 4<N<31", bg="#D3D3D3").grid(row=0, column=0, padx=10, pady=10)
         validate_input_cmd = self.master.register(self.validate_input)
         tk.Entry(self.input_frame, textvariable=self.n_var, validate="key", validatecommand=(validate_input_cmd, "%P")).grid(row=0, column=1, padx=10, pady=10)
 
@@ -44,7 +45,13 @@ class KnightTourSolver:
 
     def show_algorithm_page(self):
         # Validate input
-        if not self.n_var.get() or self.n_var.get() <= 0 or not (1 <= self.x_var.get() <= self.n_var.get()) or not (1 <= self.y_var.get() <= self.n_var.get()):
+        if (
+    not self.n_var.get() or
+    not (5 <= self.n_var.get() <= 30) or  # Add this condition
+    self.n_var.get() <= 0 or
+    not (1 <= self.x_var.get() <= self.n_var.get()) or
+    not (1 <= self.y_var.get() <= self.n_var.get())
+):
             messagebox.showerror("Error", "Invalid input. Please check the values.")
             return
 
@@ -66,27 +73,67 @@ class KnightTourSolver:
         optimized_backtracking_btn.grid(row=1, column=3, pady=10)
 
     def show_solution_page_backtracking(self):
+        # Record start time
+        start_time = time.time()
+
+        # Solve the Knight's Tour using Backtracking algorithm
         solution_board = solve_knights_tour_backtracking(self.n_var.get(), self.x_var.get(), self.y_var.get())
-        self.show_solution_board(solution_board)
+
+        # Record end time
+        end_time = time.time()
+
+        # Calculate execution time
+        execution_time = end_time - start_time
+
+        # Show the solution board along with execution time
+        self.show_solution_board(solution_board, execution_time)
+
 
     def show_solution_page_genetics(self):
-        # Placeholder for Genetics algorithm
-        solution_board = solve_genetics(self.n_var.get())
-        self.show_solution_board(solution_board)
+        # Record start time
+        start_time = time.time()
+
+        # Solve the Knight's Tour using genetics algorithm
+        solution_board = solve_genetics(self.n_var.get(), self.x_var.get(), self.y_var.get())
+
+        # Record end time
+        end_time = time.time()
+
+        # Calculate execution time
+        execution_time = end_time - start_time
+
+        # Show the solution board along with execution time
+        self.show_solution_board(solution_board, execution_time)
 
     def show_solution_page_optimized_backtracking(self):
-        solution_board = solve_optimized_backtracking(self.n_var.get(), self.x_var.get(), self.y_var.get())
-        self.show_solution_board(solution_board)
+        # Record start time
+        start_time = time.time()
 
-    def show_solution_board(self, board):
+        # Solve the Knight's Tour using optmized Backtracking algorithm
+        solution_board = solve_optimized_backtracking(self.n_var.get(), self.x_var.get(), self.y_var.get())
+
+        # Record end time
+        end_time = time.time()
+
+        # Calculate execution time
+        execution_time = end_time - start_time
+
+        # Show the solution board along with execution time
+        self.show_solution_board(solution_board, execution_time)
+
+    def show_solution_board(self, board, execution_time):
+        # Destroy the algorithm frame
         self.algorithm_frame.destroy()
 
+        # Create the output frame
         self.output_frame = tk.Frame(self.master, bg="#D3D3D3")
         self.output_frame.pack()
 
+        # Create a canvas for the solution board
         canvas = tk.Canvas(self.output_frame, width=50 * self.n_var.get(), height=50 * self.n_var.get(), bg="white")
         canvas.grid(row=0, column=0, padx=10, pady=10)
 
+        # Draw the chessboard and place the labels
         for row in range(self.n_var.get()):
             for col in range(self.n_var.get()):
                 color = "white" if (row + col) % 2 == 0 else "#87CEEB"
@@ -98,7 +145,8 @@ class KnightTourSolver:
                 label = tk.Label(canvas, text=label_text, width=4, height=2, relief="ridge", borderwidth=2)
                 label.place(x=col * 50 + 25, y=row * 50 + 25, anchor="center")
 
-
+        # Display the execution time
+        tk.Label(self.output_frame, text=f"Execution Time: {execution_time:.5f} seconds", bg="#D3D3D3").grid(row=1, column=0, pady=10)
 if __name__ == "__main__":
     root = tk.Tk()
     app = KnightTourSolver(root)
