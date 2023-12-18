@@ -3,7 +3,6 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from ttkthemes import ThemedStyle
-import numpy as np
 from tkinter import messagebox
 from backtracking_solver import solve_knights_tour_backtracking
 from genetics_solver import solve_genetics
